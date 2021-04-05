@@ -7,23 +7,19 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANAnalog;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.RobotController;
 //import edu.wpi.first.wpilibj.controller.PIDController; //Use for Roborio PID
 //import edu.wpi.first.wpiutil.math.MathUtil; // Use for RoboRio PID
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.*;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 //import frc.robot.subsystems.setSwerveModule;
 
@@ -66,7 +62,7 @@ public class swerveModule extends SubsystemBase {
 		driveMotor.restoreFactoryDefaults();
 		driveMotor.setInverted(invertDrive);
 		driveMotor.setOpenLoopRampRate(RAMP_RATE);
-		driveMotor.setIdleMode(IdleMode.kBrake);
+		driveMotor.setIdleMode(IdleMode.kCoast);
 
     //Create and configure an analog input on a roborio port
     analogIn = new AnalogInput(analogNum);
@@ -80,6 +76,7 @@ public class swerveModule extends SubsystemBase {
     steerMotorEncoder = steerMotor.getEncoder();
     driveMotorEncoder = driveMotor.getEncoder();
 
+    driveMotorEncoder.setPosition(0);
 
     //Create an analog encoder to read values from Spark Max breakout board
     steerAnalogEncoder = steerMotor.getAnalog(CANAnalog.AnalogMode.kAbsolute);
@@ -102,9 +99,9 @@ public class swerveModule extends SubsystemBase {
     //steerCANPID.setFeedbackDevice(steerAnalogEncoder);
     
     // PID coefficients for a Spark Max
-    kP = 0.08; 
+    kP = 0.2; //0.08; 
     kI = 0.000;
-    kD = 0.0000; 
+    kD = 0.002; //0.0000; 
     kIz = 0; 
     kFF = 0; 
     kMaxOutput = 1; 
@@ -204,13 +201,13 @@ public class swerveModule extends SubsystemBase {
   
   //Get the built in Spark/Neo Drive motor encoder position. Value is in motor revolutions.
   public double getDriveEncoder() {
-    return driveMotor.getEncoder().getPosition();
+    return driveMotorEncoder.getPosition();
   }
   
   //Set the position value of the Spark/Neo Drive motor encoder position. Position is in 
   //motor revolutions.
   public void setDriveEncoder(double position) {
-    driveMotor.getEncoder().setPosition(position);
+    driveMotorEncoder.setPosition(position);
   }
   
   //Set the drive motor speed from -1 to 1 
@@ -258,20 +255,20 @@ public class swerveModule extends SubsystemBase {
   public double getSteerMotorEncoder(){
     double posRaw = steerMotorEncoder.getPosition() * (360/STEER_MOTOR_RATIO); //steer motor encoder in degrees
     //double scaledAnalog = getSteerAnalogEncoder();// analog in from Spark Max Breakout board in degrees
-    double scaledAnalog = getAnalogIn(); //analog in from Roborio in degrees
+    // double scaledAnalog = getAnalogIn(); //analog in from Roborio in degrees
     //Periodic check to see if motor encoder aligns with analog encoder
-    if (loopCounter <= 10) {
-      loopCounter =+ 1;
-    }
-    else {
-      loopCounter = 0;
-      //If motor position is not within limits reset the motor encoder
-      if ((posRaw > (scaledAnalog + MAXSTEERERROR)) || 
-        (posRaw < (scaledAnalog - MAXSTEERERROR))) {
-        steerMotor.getEncoder().setPosition(scaledAnalog);
-        posRaw = scaledAnalog;
-      }
-    }
+    // if (loopCounter <= 10) {
+    //   loopCounter =+ 1;
+    // }
+    // else {
+    //   loopCounter = 0;
+    //   //If motor position is not within limits reset the motor encoder
+    //   if ((posRaw > (scaledAnalog + MAXSTEERERROR)) || 
+    //     (posRaw < (scaledAnalog - MAXSTEERERROR))) {
+    //     steerMotor.getEncoder().setPosition(scaledAnalog);
+    //     posRaw = scaledAnalog;
+    //   }
+    // }
     return posRaw;
   }
 

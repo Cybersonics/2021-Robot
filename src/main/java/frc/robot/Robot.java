@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.XboxController;
-import java.util.function.DoubleSupplier;
 
 import frc.robot.commands.AutoCommand;
+import frc.robot.commands.Auton.AutonDriveDistanceCommand;
 import frc.robot.subsystems.Drive;
 
 
@@ -28,7 +28,7 @@ import frc.robot.subsystems.Drive;
 public class Robot extends TimedRobot {
 
   public static XboxController xBoxController;
-  private AutoCommand m_autonomousCommand;
+  private AutonDriveDistanceCommand m_autonomousCommand;
   private RobotContainer m_robotContainer;
   private ShuffleboardTab driveTab = Shuffleboard.getTab("DriveTab");
 

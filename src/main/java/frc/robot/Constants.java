@@ -20,6 +20,7 @@ public final class Constants {
 
     public final static int INTAKE_VICTOR = 5;
     public final static int INDEXER_VICTOR = 4;
+    public final static int MECANUM_TALON = 7;
     public final static int SHOOTER_SPARK_ONE = 1;
     public final static int SHOOTER_SPARK_TWO = 2;
     public final static int PIVOT_TALON = 3;
@@ -52,5 +53,6 @@ public final class Constants {
     public final static double AUTON_POSITION = -810;
     public final static double LIFT_OPEN_POSITION = -800;
     public final static double LIFT_LOCK_POSITION = -875;
-    
+ 
+    public final static double ROTATION_PER_INCH = 0.556;
 }
