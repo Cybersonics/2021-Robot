@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.*;
 public class FieldCentricSwerveDrive extends CommandBase {
 	
 	public static final double OMEGA_SCALE = 1.0 / 30.0;
-	public static final double DEADZONE = 0.3;
+	public static final double DEADZONE = 0.06;
 	private double originHeading = 0.0;
 	private double originCorr;
 

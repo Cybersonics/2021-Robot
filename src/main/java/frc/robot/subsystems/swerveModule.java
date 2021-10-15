@@ -137,10 +137,10 @@ public class swerveModule extends SubsystemBase {
     // instead and
     // only rotate by the complement
     //if (Math.abs(speed) <= MAX_SPEED){
-      if (Math.abs(deltaDegrees) > 90.0) {
-      	deltaDegrees -= 180.0 * Math.signum(deltaDegrees);
-      	speed = -speed;
-      }
+      // if (Math.abs(deltaDegrees) > 90.0) {
+      // 	deltaDegrees -= 180.0 * Math.signum(deltaDegrees);
+      // 	speed = -speed;
+      // }
 	  //}
     //Add change in position to current position
     double targetPosition = currentAngle + deltaDegrees; 

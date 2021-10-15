@@ -42,7 +42,7 @@ public class Drive extends SubsystemBase {
 	public static final double MAX_SPEED = 0.8; // Max speed is 0 to 1
 	public static final double MAX_REVERSIBLE_SPEED_DIFFERENCE = 0.5 * MAX_SPEED;
 
-	public static final double DEADZONE = 0.08;
+	public static final double DEADZONE = 0.04;
 
 	public static final double OMEGA_SCALE = 1.0 / 30.0;
 

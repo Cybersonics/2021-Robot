@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.FieldCentricSwerveDrive;
 import frc.robot.commands.IndexerCommand;
@@ -42,6 +43,7 @@ public class RobotContainer {
   public static Indexer _indexer = new Indexer();
   public static Intake _intake = new Intake();
   public static Launcher _launcher = new Launcher();
+  public double speedMultiplier = 0.45;
   
   private final AutonDriveDistanceCommand m_autoCommand = new AutonDriveDistanceCommand(12.0);
   private final IntakeCommand _intakeCommand = new IntakeCommand(_intake);
@@ -60,31 +62,31 @@ public class RobotContainer {
     // Configure the button bindings
     leftJoy = new Joystick(Constants.LEFT_JOYSTICK);
     rightJoy = new Joystick(Constants.RIGHT_JOYSTICK);
-    // xboxController = new XboxController(Constants.XBOX_CONTROLLER);
-    driveController = new XboxController(Constants.XBOX_CONTROLLER);
+    xboxController = new XboxController(Constants.XBOX_CONTROLLER);
+    ///driveController = new XboxController(Constants.XBOX_CONTROLLER);
 
-    // CommandScheduler.getInstance()
-    // .setDefaultCommand(
-    //   driveSub,
-    //   new FieldCentricSwerveDrive(
-    //     driveSub,
-    //     () -> leftJoy.getY(),
-    //     () -> leftJoy.getX(),
-    //     () -> rightJoy.getX(),
-    //     leftJoy.getTrigger()
-    //   )
-    // );
     CommandScheduler.getInstance()
     .setDefaultCommand(
       driveSub,
       new FieldCentricSwerveDrive(
         driveSub,
-        () -> driveController.getY(Hand.kLeft) * 0.8,
-        () -> driveController.getX(Hand.kLeft) * 0.8,
-        () -> driveController.getX(Hand.kRight) * 0.8,
-        driveController.getAButton()
+        () -> leftJoy.getY(),
+        () -> leftJoy.getX(),
+        () -> rightJoy.getX(),
+        leftJoy.getTrigger()
       )
     );
+    // CommandScheduler.getInstance()
+    // .setDefaultCommand(
+    //   driveSub,
+    //   new FieldCentricSwerveDrive(
+    //     driveSub,
+    //     () -> driveController.getY(Hand.kLeft) * speedMultiplier,
+    //     () -> driveController.getX(Hand.kLeft) * speedMultiplier,
+    //     () -> driveController.getX(Hand.kRight) * speedMultiplier,
+    //     driveController.getAButton()
+    //   )
+    // );
     configureButtonBindings();
   }
 
@@ -95,25 +97,25 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-  //new JoystickButton(leftJoy, 7).whenPressed(() -> Navx.getInstance().getFuzedHeading());
-    // new JoystickButton(leftJoy, 7).whenPressed(() -> driveSub.zeroNavHeading());     
-        // _indexer.setDefaultCommand(new IndexerCommand(
-        //   _indexer,
-        //   () -> xboxController.getY(Hand.kRight)
-        // ));
+    new JoystickButton(leftJoy, 7).whenPressed(() -> driveSub.zeroNavHeading());
+    //new JoystickButton(driveController, 7).whenPressed(() -> driveSub.zeroNavHeading());     
+        _indexer.setDefaultCommand(new IndexerCommand(
+          _indexer,
+          () -> xboxController.getY(Hand.kRight)
+        ));
     
-        // _intake.setDefaultCommand(new IntakeCommand(
-        //   _intake, 
-        //   () -> xboxController.getY(Hand.kLeft)
-        // ));
+        _intake.setDefaultCommand(new IntakeCommand(
+          _intake, 
+          () -> xboxController.getY(Hand.kLeft)
+        ));
 
         // new JoystickButton(xboxController, 1).whenPressed(new PivotCommand(_launcher, Constants.TRENCH_POSITION ));
         // new JoystickButton(xboxController, 4).whenPressed(new PivotCommand(_launcher, Constants.AUTON_POSITION));
         // new JoystickButton(xboxController, 3).whenPressed(new PivotCommand(_launcher, Constants.LIFT_LOCK_POSITION));
         // new JoystickButton(xboxController, 2).whenPressed(new PivotCommand(_launcher, Constants.LIFT_OPEN_POSITION));
 
-	    	// new JoystickButton(xboxController, 6).whenPressed(() -> _shooterCommand.fire());
-        // new JoystickButton(xboxController, 6).whenReleased(() -> _shooterCommand.stop());
+	    	new JoystickButton(xboxController, 6).whenPressed(() -> _shooterCommand.fire());
+        new JoystickButton(xboxController, 6).whenReleased(() -> _shooterCommand.stop());
     }
 
   /**
