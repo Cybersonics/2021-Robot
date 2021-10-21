@@ -31,7 +31,7 @@ public class swerveModule extends SubsystemBase {
   public double currentPosition;
   private CANSparkMax steerMotor;
   private CANSparkMax driveMotor;
-  private static final double RAMP_RATE = 0.5;
+  private static final double RAMP_RATE = 3;
 
   //Use the following two line if using PID in RoboRIO
   //private static final double STEER_P = .0035, STEER_I = 0.00003, STEER_D = 0.0000;
@@ -212,7 +212,7 @@ public class swerveModule extends SubsystemBase {
   
   //Set the drive motor speed from -1 to 1 
   public void setDriveSpeed(double speed) {
-    driveMotor.set(speed);
+    driveMotor.set(speed*0.5);
   }
   
   //Get the drive motor speed.
