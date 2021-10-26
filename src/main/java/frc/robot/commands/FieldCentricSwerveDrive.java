@@ -11,17 +11,28 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import java.util.function.DoubleSupplier;
 import frc.robot.subsystems.Drive;
 import edu.wpi.first.wpilibj.smartdashboard.*;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  * Field Centric command that can operate as Robot centric when left 
  * joystick trigger is pulled.
  */
 public class FieldCentricSwerveDrive extends CommandBase {
-	
-	public static final double OMEGA_SCALE = 1.0 / 30.0;
-	public static final double DEADZONE = 0.06;
+
+	NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+	NetworkTableEntry tx = table.getEntry("tx");
+	NetworkTableEntry ty = table.getEntry("ty");
+	NetworkTableEntry ta = table.getEntry("ta");
+
+	public static final double OMEGA_SCALE = 1.0 / 60.0;//30
+	public static final double DEADZONE_LSTICK = 0.06;
+	private static final double DEADZONE_RSTICK = 0.07;
 	private double originHeading = 0.0;
 	private double originCorr;
+	private double leftPow = 2;
+	private double rightPow = 2;
 
 	private Drive drive;
 	private final DoubleSupplier stickForward;
@@ -60,23 +71,37 @@ public class FieldCentricSwerveDrive extends CommandBase {
 
     @Override
 	public void execute() {
+
+		double xVisionVal = tx.getDouble(0.0);
+		double yVisionVal = ty.getDouble(0.0);
+		double areaVisionVal = ta.getDouble(0.0);
 	
+		SmartDashboard.putNumber("LimelightX", xVisionVal);
+		SmartDashboard.putNumber("LimelightY", yVisionVal);
+		SmartDashboard.putNumber("LimLightArea", areaVisionVal);
+		SmartDashboard.putBoolean("LeftTrigger", stickFieldCentric);
+
 		final double originOffset = 360 - originHeading;
 		originCorr = drive.getNavHeading() + originOffset;
 		
-		double forward = stickForward.getAsDouble();
-		double strafe = -stickStrafe.getAsDouble();
-		double omega = -stickRotation.getAsDouble() * OMEGA_SCALE;
+		//double forward = stickForward.getAsDouble();
+		//double strafe = -stickStrafe.getAsDouble();
+		//double omega = -stickRotation.getAsDouble() * OMEGA_SCALE;
+
+		double strafe = Math.pow(Math.abs(stickStrafe.getAsDouble()), leftPow) * Math.signum(-stickStrafe.getAsDouble());
+		double forward = Math.pow(Math.abs(stickForward.getAsDouble()), leftPow) * Math.signum(stickForward.getAsDouble());
+        double omega = Math.pow(Math.abs(stickRotation.getAsDouble()), rightPow) * Math.signum(-stickRotation.getAsDouble()) * OMEGA_SCALE;
+
 		SmartDashboard.putNumber("Forward", forward);
 		SmartDashboard.putNumber("Strafe", strafe);
 		SmartDashboard.putNumber("Rotation", omega);
 
 		// Add a small deadzone on the joysticks
-		if (Math.abs(strafe) < DEADZONE)
+		if (Math.abs(strafe) < DEADZONE_LSTICK)
 			strafe = 0.0;
-		if (Math.abs(forward) <DEADZONE)
+		if (Math.abs(forward) <DEADZONE_LSTICK)
 			forward = 0.0;
-		if (Math.abs(omega) < DEADZONE * OMEGA_SCALE)
+		if (Math.abs(omega) < DEADZONE_RSTICK * OMEGA_SCALE)
 			omega = 0.0;
 
 		if (!stickFieldCentric) {

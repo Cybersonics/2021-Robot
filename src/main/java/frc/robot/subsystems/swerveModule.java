@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.RobotController;
 //import edu.wpi.first.wpilibj.controller.PIDController; //Use for Roborio PID
 //import edu.wpi.first.wpiutil.math.MathUtil; // Use for RoboRio PID
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.smartdashboard.*;
 
 //import frc.robot.subsystems.setSwerveModule;
 
@@ -31,7 +32,7 @@ public class swerveModule extends SubsystemBase {
   public double currentPosition;
   private CANSparkMax steerMotor;
   private CANSparkMax driveMotor;
-  private static final double RAMP_RATE = 3;
+  private static final double RAMP_RATE = 1.5;
 
   //Use the following two line if using PID in RoboRIO
   //private static final double STEER_P = .0035, STEER_I = 0.00003, STEER_D = 0.0000;
@@ -123,7 +124,9 @@ public class swerveModule extends SubsystemBase {
   public void setSwerve(double angle, double speed) {
     
     //double currentAngle = getAnalogIn() % 360.0; // Use for RoboRio PID
-    double currentAngle = getSteerMotorEncoder();
+    double currentSteerPosition = getSteerMotorEncoder();
+    double currentAngle = currentSteerPosition % 360.0;
+    //double currentAngle = getSteerMotorEncoder();
     double targetAngle = angle; //-angle;
     double deltaDegrees = targetAngle - currentAngle;
 
@@ -137,13 +140,14 @@ public class swerveModule extends SubsystemBase {
     // instead and
     // only rotate by the complement
     //if (Math.abs(speed) <= MAX_SPEED){
-      // if (Math.abs(deltaDegrees) > 90.0) {
-      // 	deltaDegrees -= 180.0 * Math.signum(deltaDegrees);
-      // 	speed = -speed;
-      // }
+      if (Math.abs(deltaDegrees) > 90.0) {
+      	deltaDegrees -= 180.0 * Math.signum(deltaDegrees);
+      	speed = -speed;
+      }
 	  //}
     //Add change in position to current position
-    double targetPosition = currentAngle + deltaDegrees; 
+    //double targetPosition = currentAngle + deltaDegrees; 
+    double targetPosition = currentSteerPosition + deltaDegrees;
     //Scale the new position to match the motor encoder
     double scaledPosition = (targetPosition / (360/STEER_MOTOR_RATIO)); 
 
@@ -160,6 +164,7 @@ public class swerveModule extends SubsystemBase {
     // SmartDashboard.putNumber("Incoming Angle", angle);
     // SmartDashboard.putNumber("CurAngle", currentAngle);
     // SmartDashboard.putNumber("TargetAngle", targetAngle);
+    // SmartDashboard.putNumber("currentSteerPosition", currentSteerPosition);
     // SmartDashboard.putNumber("DeltaDegrees", deltaDegrees);
     // SmartDashboard.putNumber("TargetPosition", targetPosition);
     // SmartDashboard.putNumber("Steer Output", scaledPosition);
@@ -185,8 +190,12 @@ public class swerveModule extends SubsystemBase {
     if ((lastEncoderVal % 360) < 90 && (scaledEncoder % 360) > 270) {
       numTurns -= 1;
     }
-    lastEncoderVal = scaledEncoder;
+    //lastEncoderVal = scaledEncoder;
     scaledEncoder += (360 * numTurns);
+    lastEncoderVal = scaledEncoder;
+    //SmartDashboard.putNumber("numTurns", numTurns);
+    //SmartDashboard.putNumber("lastEncoder", lastEncoderVal);
+    //SmartDashboard.putNumber("scaledEncoder", scaledEncoder);
     return scaledEncoder;
   }
 
@@ -212,7 +221,7 @@ public class swerveModule extends SubsystemBase {
   
   //Set the drive motor speed from -1 to 1 
   public void setDriveSpeed(double speed) {
-    driveMotor.set(speed*0.5);
+    driveMotor.set(speed);
   }
   
   //Get the drive motor speed.

@@ -24,10 +24,12 @@ import frc.robot.Constants;
 
 public class Launcher extends SubsystemBase {
 
+
   private final double MAX_SHOOTER_RATE = 1.0;
   public double PivotRate = 0.5;
   public CANSparkMax _leftMotor;
   public CANSparkMax _rightMotor;
+  private static Launcher instance;
   public static TalonSRX _pivotMotor;
 
   public double CurrentAngle;
@@ -39,7 +41,7 @@ public class Launcher extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  public Launcher() {
+  private Launcher() {
     CommandScheduler.getInstance().registerSubsystem(this);
     setupRightMotor();
     setupLeftMotor();
@@ -53,7 +55,14 @@ public class Launcher extends SubsystemBase {
   }  
   
   // Public Methods
-
+  public static Launcher getInstance()
+  {
+    if(instance==null)
+    {
+        instance = new Launcher();
+    }
+    return instance;
+  }
   public void calculatedLaunch(double speed) {
     _rightMotor.set(speed);
     _leftMotor.set(speed);

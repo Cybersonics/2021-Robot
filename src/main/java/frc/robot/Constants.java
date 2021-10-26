@@ -24,6 +24,8 @@ public final class Constants {
     public final static int SHOOTER_SPARK_ONE = 1;
     public final static int SHOOTER_SPARK_TWO = 2;
     public final static int PIVOT_TALON = 3;
+    // NEED TO Find real value
+    public final static int CLIMBER_TALON = 6;
 
     public static final int LEFT_JOYSTICK = 0;
     public static final int RIGHT_JOYSTICK = 1;

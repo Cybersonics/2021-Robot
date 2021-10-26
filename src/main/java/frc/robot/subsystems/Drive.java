@@ -37,12 +37,12 @@ public class Drive extends SubsystemBase {
 	private static final double WHEEL_BASE_LENGTH = 22; // 28.0;
 	private static final double WHEEL_BASE_WIDTH = 23.5; // 22.0;
 
-	private static final double WHEEL_DIAMETER = 4.0;
+	//private static final double WHEEL_DIAMETER = 4.0;
 	// TO DO: Correct equation that uses MAX_SPEED
-	public static final double MAX_SPEED = 0.8; // Max speed is 0 to 1
-	public static final double MAX_REVERSIBLE_SPEED_DIFFERENCE = 0.5 * MAX_SPEED;
+	public static final double MAX_SPEED = 0.75; // Max speed is 0 to 1
+	public static final double MAX_REVERSIBLE_SPEED_DIFFERENCE = 0.7 * MAX_SPEED;
 
-	public static final double DEADZONE = 0.04;
+	public static final double DEADZONE = 0.06;
 
 	public static final double OMEGA_SCALE = 1.0 / 30.0;
 
@@ -178,16 +178,16 @@ public class Drive extends SubsystemBase {
 		// Compute the maximum speed so that we can scale all the speeds to the range
 		// [0, 1]
 		double maxSpeed = Collections.max(Arrays.asList(speedFL, speedBL, speedFR, speedBR, 1.0));
-		// maxSpeed *= MAX_SPEED;
+		//maxSpeed *= MAX_SPEED;
 		if (deadStick) {
 
-			frontLeft.setSteerSpeed(0);
+			// frontLeft.setSteerSpeed(0);
 			frontLeft.setDriveSpeed(0);
-			backLeft.setSteerSpeed(0);
+			// backLeft.setSteerSpeed(0);
 			backLeft.setDriveSpeed(0);
-			frontRight.setSteerSpeed(0);
+			// frontRight.setSteerSpeed(0);
 			frontRight.setDriveSpeed(0);
-			backRight.setSteerSpeed(0);
+			// backRight.setSteerSpeed(0);
 			backRight.setDriveSpeed(0);
 
 		} else {

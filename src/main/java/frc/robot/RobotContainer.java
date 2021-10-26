@@ -42,7 +42,7 @@ public class RobotContainer {
   public static Drive driveSub = Drive.getInstance();
   public static Indexer _indexer = new Indexer();
   public static Intake _intake = new Intake();
-  public static Launcher _launcher = new Launcher();
+  public static Launcher _launcher = Launcher.getInstance();
   public double speedMultiplier = 0.45;
   
   private final AutonDriveDistanceCommand m_autoCommand = new AutonDriveDistanceCommand(12.0);
