@@ -22,12 +22,11 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
  * An example command that uses an example subsystem.
  */
 public class ClimberCommand extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  public static TalonSRX ClimberMotor;
   private Climber _climber;
   private boolean _isLocked = false;
   private Launcher _launcher;
   private double _pivotSetpoint;
+  private boolean _shouldExtend;
 
   /**
    * Creates a new ExampleCommand.
@@ -37,14 +36,15 @@ public class ClimberCommand extends CommandBase {
   public ClimberCommand(Climber climber, Launcher launcher, boolean shouldExtend) {
     this._climber = climber;
     this._launcher = launcher;
-    this._pivotSetpoint = (shouldExtend) ? Constants.LIFT_OPEN_POSITION : Constants.LIFT_LOCK_POSITION;
+    this._shouldExtend = shouldExtend;
+    this._pivotSetpoint = (this._shouldExtend) ? Constants.LIFT_OPEN_POSITION : Constants.LIFT_LOCK_POSITION;
     addRequirements(launcher, climber);
   }  
 
   private boolean isLocked() {
-    if(Math.abs(Launcher.getPivotAngle()) > Constants.LIFT_OPEN_POSITION) {
+    if(Launcher.getPivotAngle() > Constants.LIFT_OPEN_POSITION) {
       this._isLocked = false;
-    } else if(Math.abs(Launcher.getPivotAngle())<Constants.LIFT_LOCK_POSITION) {
+    } else if(Launcher.getPivotAngle() < Constants.LIFT_LOCK_POSITION) {
       this._isLocked = true;
     }
 
@@ -66,14 +66,17 @@ public class ClimberCommand extends CommandBase {
     System.out.println("[ClimberCommand] TargetSetPoint: " + _pivotSetpoint + " Current Angle: " +  Launcher.getPivotAngle());
     if (Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) > 700) {
       this._launcher.calculatedPivot(this._pivotSetpoint);
-    } else if (Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) < 950) {
+    } else if (Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) < 900) {
       this._launcher.calculatedPivot(this._pivotSetpoint);
-    } else if (!this.isLocked() && !this._climber.extended()) {
+    }
+
+    System.out.println("[ClimberCommand] shouldExtend: " + this._shouldExtend);
+    if (!this.isLocked() && this._shouldExtend ) {
       this._climber.extend();
-    } else if (this.isLocked() && !this._climber.retracted()) {
+    } else if (this.isLocked() && !this._shouldExtend) {
       this._climber.retract();
     } else {
-      end(true);
+      end(false);
     }
   }
 
@@ -84,11 +87,13 @@ public class ClimberCommand extends CommandBase {
       System.out.println("[PivotCommand] interrupted due to bad setpoint value");
     }
     this._launcher.stopPivot();
+    this._climber.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) < 3;
+    // (Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) < 3) && 
+    return (this._shouldExtend) ? this._climber.extended() : this._climber.retracted();
   }
 }

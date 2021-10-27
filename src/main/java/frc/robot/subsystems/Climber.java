@@ -48,19 +48,19 @@ public class Climber extends SubsystemBase {
     }
 
     public void extend(){
-        ClimberTalon.set(ControlMode.PercentOutput, 0.6);
+        ClimberTalon.set(ControlMode.PercentOutput, -(0.6));
     }
 
     public boolean extended() {
-        return true;
+        return ClimberTalon.isRevLimitSwitchClosed() == 1;
     }
 
     public boolean retracted() {
-        return true;
+        return ClimberTalon.isFwdLimitSwitchClosed() == 1;
     }
 
     public void retract(){
-        ClimberTalon.set(ControlMode.PercentOutput, -(0.6));
+        ClimberTalon.set(ControlMode.PercentOutput, 0.6);
     }
 
     public void stop(){

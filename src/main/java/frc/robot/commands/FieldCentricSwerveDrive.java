@@ -65,6 +65,10 @@ public class FieldCentricSwerveDrive extends CommandBase {
 		this.stickStrafe = () -> leftJoystick.getX();
 		this.stickRotation = () -> rightJoystick.getX();
 		this.stickFieldCentric = leftJoystick.getTrigger();
+
+		
+		drive = driveSub;
+		addRequirements(drive);
 	}
 
 	// public static FieldCentricSwerveDrive getInstance() {
