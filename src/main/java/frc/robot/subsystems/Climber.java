@@ -25,15 +25,14 @@ public class Climber extends SubsystemBase {
     public static TalonSRX ClimberTalon;
     public static Servo ClimberServo;
     private double ClimbSpeed;
-    public Launcher Launcherinstance;
+    private static Climber _instance;
 
     /**
      * 
      */
-    public Climber () {
+    private Climber () {
         scheduler = CommandScheduler.getInstance();
         scheduler.registerSubsystem(this);
-        Launcherinstance = Launcher.getInstance();
 
         ClimberTalon = new TalonSRX(Constants.CLIMBER_TALON);
         ClimberTalon.configFactoryDefault();
@@ -41,8 +40,23 @@ public class Climber extends SubsystemBase {
         ClimbSpeed = 0.6;
     }
 
+    public static Climber getInstance() {
+        if(_instance == null) {
+            _instance = new Climber();
+        }
+        return _instance;
+    }
+
     public void extend(){
         ClimberTalon.set(ControlMode.PercentOutput, 0.6);
+    }
+
+    public boolean extended() {
+        return true;
+    }
+
+    public boolean retracted() {
+        return true;
     }
 
     public void retract(){

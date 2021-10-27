@@ -8,7 +8,7 @@
 package frc.robot.commands.Auton;
 
 import frc.robot.subsystems.Climber;
-
+import frc.robot.subsystems.Launcher;
 import frc.robot.Robot;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -24,75 +24,71 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 public class ClimberCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   public static TalonSRX ClimberMotor;
-  Climber climber;
-  private static boolean isLocked;
+  private Climber _climber;
+  private boolean _isLocked = false;
+  private Launcher _launcher;
+  private double _pivotSetpoint;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ClimberCommand() {
-    // Creating new climber object
-    ClimberMotor = new TalonSRX(Constants.CLIMBER_TALON);
-  }
+  public ClimberCommand(Climber climber, Launcher launcher, boolean shouldExtend) {
+    this._climber = climber;
+    this._launcher = launcher;
+    this._pivotSetpoint = (shouldExtend) ? Constants.LIFT_OPEN_POSITION : Constants.LIFT_LOCK_POSITION;
+    addRequirements(launcher, climber);
+  }  
 
-  public void extend(){
-    ClimberMotor.set(ControlMode.PercentOutput, 0.5);
-  }
+  private boolean isLocked() {
+    if(Math.abs(Launcher.getPivotAngle()) > Constants.LIFT_OPEN_POSITION) {
+      this._isLocked = false;
+    } else if(Math.abs(Launcher.getPivotAngle())<Constants.LIFT_LOCK_POSITION) {
+      this._isLocked = true;
+    }
 
-  public void retract(){
-    ClimberMotor.set(ControlMode.PercentOutput, -(0.5));
-  }
-
-  public void stop(){
-    ClimberMotor.set(ControlMode.PercentOutput, 0);
+    return this._isLocked;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (this._pivotSetpoint > -700) {
+      System.out.println("[ClimberCommand] Ending command bad setpoint passed");
+      end(true);
+      }
   }
-
-
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    // Intake Runs In
-    if(Robot.xBoxController.getPOV() == 0) 
-    {
-      climber.extend();
-    } 
-    // Intake Goes Backward
-    else if(Robot.xBoxController.getPOV() == 180) 
-    {
-      climber.retract();
-    }
-    // Intake Shuts off
-    else if (Robot.xBoxController.getPOV() == 270) 
-    {
-      climber.stop();
-    } 
-    if (Robot.xBoxController.getRawButton(4)){
-      if (isLocked){
-        climber.retract();
-      }
-      else{
-        climber.stop();
-      }
+    System.out.println("[ClimberCommand] TargetSetPoint: " + _pivotSetpoint + " Current Angle: " +  Launcher.getPivotAngle());
+    if (Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) > 700) {
+      this._launcher.calculatedPivot(this._pivotSetpoint);
+    } else if (Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) < 950) {
+      this._launcher.calculatedPivot(this._pivotSetpoint);
+    } else if (!this.isLocked() && !this._climber.extended()) {
+      this._climber.extend();
+    } else if (this.isLocked() && !this._climber.retracted()) {
+      this._climber.retract();
+    } else {
+      end(true);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    if (interrupted) {
+      System.out.println("[PivotCommand] interrupted due to bad setpoint value");
+    }
+    this._launcher.stopPivot();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) < 3;
   }
 }

@@ -19,6 +19,8 @@ import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.Auton.AutonDriveDistanceCommand;
+import frc.robot.commands.Auton.ClimberCommand;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -43,6 +45,7 @@ public class RobotContainer {
   public static Indexer _indexer = new Indexer();
   public static Intake _intake = new Intake();
   public static Launcher _launcher = Launcher.getInstance();
+  public static Climber _climber = Climber.getInstance();
   public double speedMultiplier = 0.45;
   
   private final AutonDriveDistanceCommand m_autoCommand = new AutonDriveDistanceCommand(12.0);
@@ -65,17 +68,25 @@ public class RobotContainer {
     xboxController = new XboxController(Constants.XBOX_CONTROLLER);
     ///driveController = new XboxController(Constants.XBOX_CONTROLLER);
 
+    // This method passes in the values of the controller to the command
+    // CommandScheduler.getInstance()
+    // .setDefaultCommand(
+    //   driveSub,
+    //   new FieldCentricSwerveDrive(
+    //     driveSub,
+    //     () -> leftJoy.getY(),
+    //     () -> leftJoy.getX(),
+    //     () -> rightJoy.getX(),
+    //     leftJoy.getTrigger()
+    //   )
+    // );
+
+    // This method passes the controllers themselves in so the command can get values
     CommandScheduler.getInstance()
-    .setDefaultCommand(
-      driveSub,
-      new FieldCentricSwerveDrive(
-        driveSub,
-        () -> leftJoy.getY(),
-        () -> leftJoy.getX(),
-        () -> rightJoy.getX(),
-        leftJoy.getTrigger()
-      )
+    .setDefaultCommand(driveSub, 
+      new FieldCentricSwerveDrive(driveSub, leftJoy, rightJoy)
     );
+
     // CommandScheduler.getInstance()
     // .setDefaultCommand(
     //   driveSub,
@@ -109,10 +120,8 @@ public class RobotContainer {
           () -> xboxController.getY(Hand.kLeft)
         ));
 
-        // new JoystickButton(xboxController, 1).whenPressed(new PivotCommand(_launcher, Constants.TRENCH_POSITION ));
-        // new JoystickButton(xboxController, 4).whenPressed(new PivotCommand(_launcher, Constants.AUTON_POSITION));
-        // new JoystickButton(xboxController, 3).whenPressed(new PivotCommand(_launcher, Constants.LIFT_LOCK_POSITION));
-        // new JoystickButton(xboxController, 2).whenPressed(new PivotCommand(_launcher, Constants.LIFT_OPEN_POSITION));
+        new JoystickButton(xboxController, 1).whenPressed(new ClimberCommand(_climber, _launcher, true));
+        new JoystickButton(xboxController, 4).whenPressed(new ClimberCommand(_climber, _launcher, false));
 
 	    	new JoystickButton(xboxController, 6).whenPressed(() -> _shooterCommand.fire());
         new JoystickButton(xboxController, 6).whenReleased(() -> _shooterCommand.stop());

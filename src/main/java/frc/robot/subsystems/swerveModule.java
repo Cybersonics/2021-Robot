@@ -255,8 +255,9 @@ public class swerveModule extends SubsystemBase {
     if ((lastEncoderVal % 360) < 90 && (scaledEncoder % 360) > 270) {
       numTurns -= 1;
     }
-    lastEncoderVal = scaledEncoder;
+ 
     scaledEncoder += (360 * numTurns);
+    lastEncoderVal = scaledEncoder;
     return scaledEncoder;
   }
 

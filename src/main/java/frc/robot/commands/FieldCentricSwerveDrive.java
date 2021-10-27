@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import java.util.function.DoubleSupplier;
 import frc.robot.subsystems.Drive;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -26,7 +27,7 @@ public class FieldCentricSwerveDrive extends CommandBase {
 	NetworkTableEntry ty = table.getEntry("ty");
 	NetworkTableEntry ta = table.getEntry("ta");
 
-	public static final double OMEGA_SCALE = 1.0 / 60.0;//30
+	public static final double OMEGA_SCALE = 1.0 / 45.0;//30
 	public static final double DEADZONE_LSTICK = 0.06;
 	private static final double DEADZONE_RSTICK = 0.07;
 	private double originHeading = 0.0;
@@ -54,6 +55,16 @@ public class FieldCentricSwerveDrive extends CommandBase {
 
 		drive = driveSub;
 		addRequirements(drive);
+	}
+
+	
+	public FieldCentricSwerveDrive(Drive driveSub, 
+									Joystick leftJoystick, 
+									Joystick rightJoystick) {
+		this.stickForward = () -> leftJoystick.getY();
+		this.stickStrafe = () -> leftJoystick.getX();
+		this.stickRotation = () -> rightJoystick.getX();
+		this.stickFieldCentric = leftJoystick.getTrigger();
 	}
 
 	// public static FieldCentricSwerveDrive getInstance() {
