@@ -79,9 +79,7 @@ public class Launcher extends SubsystemBase {
   }
 
   public void calculatedPivot(final double setPoint) {
-    if (setPoint > 650) {
-      _pivotMotor.set(ControlMode.Position, setPoint);
-    } else if (setPoint < 1000) {
+    if (setPoint > -950 && setPoint < -650) {
       _pivotMotor.set(ControlMode.Position, setPoint);
     }
   }

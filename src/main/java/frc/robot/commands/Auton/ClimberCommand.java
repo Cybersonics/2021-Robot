@@ -39,12 +39,12 @@ public class ClimberCommand extends CommandBase {
     this._shouldExtend = shouldExtend;
     this._pivotSetpoint = (this._shouldExtend) ? Constants.LIFT_OPEN_POSITION : Constants.LIFT_LOCK_POSITION;
     addRequirements(launcher, climber);
-  }  
+  }
 
   private boolean isLocked() {
-    if(Launcher.getPivotAngle() > Constants.LIFT_OPEN_POSITION) {
+    if (Launcher.getPivotAngle() > Constants.LIFT_OPEN_POSITION) {
       this._isLocked = false;
-    } else if(Launcher.getPivotAngle() < Constants.LIFT_LOCK_POSITION) {
+    } else if (Launcher.getPivotAngle() < Constants.LIFT_LOCK_POSITION) {
       this._isLocked = true;
     }
 
@@ -57,19 +57,25 @@ public class ClimberCommand extends CommandBase {
     if (this._pivotSetpoint > -700) {
       System.out.println("[ClimberCommand] Ending command bad setpoint passed");
       end(true);
-      }
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("[ClimberCommand] TargetSetPoint: " + _pivotSetpoint + " Current Angle: " +  Launcher.getPivotAngle());
+    System.out
+        .println("[ClimberCommand] TargetSetPoint: " + _pivotSetpoint + " Current Angle: " + Launcher.getPivotAngle());
     if (Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) > 700) {
       this._launcher.calculatedPivot(this._pivotSetpoint);
     } else if (Math.abs(this._pivotSetpoint - Launcher.getPivotAngle()) < 900) {
       this._launcher.calculatedPivot(this._pivotSetpoint);
     }
-
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     System.out.println("[ClimberCommand] shouldExtend: " + this._shouldExtend);
     if (!this.isLocked() && this._shouldExtend ) {
       this._climber.extend();

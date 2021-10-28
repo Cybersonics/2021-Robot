@@ -17,6 +17,7 @@ import frc.robot.commands.AutoCommand;
 import frc.robot.commands.FieldCentricSwerveDrive;
 import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.PivotCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.Auton.AutonDriveDistanceCommand;
 import frc.robot.commands.Auton.ClimberCommand;
@@ -122,6 +123,7 @@ public class RobotContainer {
 
         new JoystickButton(xboxController, 1).whenPressed(new ClimberCommand(_climber, _launcher, true));
         new JoystickButton(xboxController, 4).whenPressed(new ClimberCommand(_climber, _launcher, false));
+        new JoystickButton(xboxController, 2).whenPressed(new PivotCommand(_launcher, Constants.AUTON_POSITION));
 
 	    	new JoystickButton(xboxController, 6).whenPressed(() -> _shooterCommand.fire());
         new JoystickButton(xboxController, 6).whenReleased(() -> _shooterCommand.stop());
