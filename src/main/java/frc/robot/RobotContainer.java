@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.AutoCommand;
@@ -19,6 +20,7 @@ import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.Auton.AutonDriveDistanceCommand;
+import frc.robot.commands.Auton.AutonRoutines;
 import frc.robot.commands.Auton.ClimberCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -48,7 +50,7 @@ public class RobotContainer {
   public static Climber _climber = Climber.getInstance();
   public double speedMultiplier = 0.45;
   
-  private final AutonDriveDistanceCommand m_autoCommand = new AutonDriveDistanceCommand(12.0);
+  private final AutonRoutines _autonRoutines = new AutonRoutines(driveSub, _launcher, _intake, _indexer);
   private final IntakeCommand _intakeCommand = new IntakeCommand(_intake);
   private final IndexerCommand _indexerCommand = new IndexerCommand(_indexer);
   private final ShooterCommand _shooterCommand = new ShooterCommand(_launcher);
@@ -132,9 +134,9 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public AutonDriveDistanceCommand getAutonomousCommand() {
+  public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return this._autonRoutines.getRotateFireMove();
   }
 
 }
