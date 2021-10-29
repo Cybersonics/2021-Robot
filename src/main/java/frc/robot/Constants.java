@@ -57,4 +57,6 @@ public final class Constants {
     public final static double LIFT_LOCK_POSITION = -875;
  
     public final static double ROTATION_PER_INCH = 0.556;
+
+    public final static double AutoRunTime = 5.0;
 }

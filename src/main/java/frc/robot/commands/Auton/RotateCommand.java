@@ -11,15 +11,19 @@ public class RotateCommand extends CommandBase {
 
     private Drive _drive;
     private double _degrees;
+    private double _navStart;
+    private double _navEnd;
     private Timer _timer;
 
     /**
      * Creates a new Drive.
      */
-    public RotateCommand(double angle) {
-      this._drive = Drive.getInstance();
+    public RotateCommand(Drive drive, double angle) {
+      this._drive = drive;
+      this._navStart = this._drive.getNavAngle();
+      this._degrees = angle;
+      this._navEnd = (this._navStart + this._degrees) % 360.0;
 
-      this._degrees = this._drive.getNavAngle() + angle;
       
       this._drive.setDriveEncodersPosition(0);
       // System.out.println("Distance To Travel: " + this._distance);
@@ -39,7 +43,7 @@ public class RotateCommand extends CommandBase {
     public void execute() {
       // double currentRotation = this._drive.getDriveEncoderAvg();
       // _distance = currentRotation + this._distance;
-      this._drive.swerveDrive(0.0, 0.5, 0.5, false);
+      this._drive.swerveDrive(0.0, 0.0, 0.3/30.0, false);
       // System.out.println("Curent: " + currentRotation);
     }
   
@@ -54,7 +58,11 @@ public class RotateCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-      if(this._degrees >= this._drive.getNavAngle()) {
+      System.out.println("[RotateCommand#fin] Init Nav: " + this._navStart); 
+      System.out.println("[RotateCommand#fin] End Nav(+-5): " + this._navEnd); 
+      System.out.println("[RotateCommand#fin] GoTo Heading: " + (this._navStart - this._drive.getNavAngle()));
+      if((this._navStart - this._drive.getNavAngle()) >= (this._navEnd - 5) ||
+       (this._navStart - this._drive.getNavAngle()) >=  (this._navEnd + 5)) {
         return true;
       }
       return false;

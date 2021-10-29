@@ -23,6 +23,7 @@ import frc.robot.commands.ShooterCommand;
 import frc.robot.commands.Auton.AutonDriveDistanceCommand;
 import frc.robot.commands.Auton.AutonRoutines;
 import frc.robot.commands.Auton.ClimberCommand;
+import frc.robot.commands.Auton.ZeroHeadingCommand;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Indexer;
@@ -44,14 +45,14 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
   */
 
-  public static Drive driveSub = Drive.getInstance();
+  public static Drive _drive = Drive.getInstance();
   public static Indexer _indexer = new Indexer();
   public static Intake _intake = new Intake();
   public static Launcher _launcher = Launcher.getInstance();
   public static Climber _climber = Climber.getInstance();
   public double speedMultiplier = 0.45;
   
-  private final AutonRoutines _autonRoutines = new AutonRoutines(driveSub, _launcher, _intake, _indexer);
+  private final AutonRoutines _autonRoutines = new AutonRoutines(_drive, _launcher, _intake, _indexer);
   private final IntakeCommand _intakeCommand = new IntakeCommand(_intake);
   private final IndexerCommand _indexerCommand = new IndexerCommand(_indexer);
   private final ShooterCommand _shooterCommand = new ShooterCommand(_launcher);
@@ -86,8 +87,8 @@ public class RobotContainer {
 
     // This method passes the controllers themselves in so the command can get values
     CommandScheduler.getInstance()
-    .setDefaultCommand(driveSub, 
-      new FieldCentricSwerveDrive(driveSub, leftJoy, rightJoy)
+    .setDefaultCommand(_drive, 
+      new FieldCentricSwerveDrive(_drive, leftJoy, rightJoy)
     );
 
     // CommandScheduler.getInstance()
@@ -111,8 +112,8 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(leftJoy, 7).whenPressed(() -> driveSub.zeroNavHeading());
-    //new JoystickButton(driveController, 7).whenPressed(() -> driveSub.zeroNavHeading());     
+    new JoystickButton(leftJoy, 7).whenPressed(new ZeroHeadingCommand(_drive));
+
         _indexer.setDefaultCommand(new IndexerCommand(
           _indexer,
           () -> xboxController.getY(Hand.kRight)

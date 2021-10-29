@@ -264,7 +264,8 @@ public class Drive extends SubsystemBase {
 	}
 
 	public void zeroNavHeading() {
-		navX.zeroYaw();
+		//navX.zeroYaw();
+		navX.reset();
 	}
 
 	public void initDefaultCommand() {
