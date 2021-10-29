@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.RobotController;
 //import edu.wpi.first.wpilibj.controller.PIDController; //Use for Roborio PID
 //import edu.wpi.first.wpiutil.math.MathUtil; // Use for RoboRio PID
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 //import frc.robot.subsystems.setSwerveModule;
 

@@ -13,12 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.XboxController;
-
-import frc.robot.commands.AutoCommand;
-import frc.robot.commands.Auton.AutonDriveDistanceCommand;
 import frc.robot.subsystems.Drive;
-
-
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to

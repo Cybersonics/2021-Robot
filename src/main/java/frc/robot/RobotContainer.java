@@ -9,18 +9,18 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AutoCommand;
 import frc.robot.commands.FieldCentricSwerveDrive;
 import frc.robot.commands.IndexerCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.PivotCommand;
 import frc.robot.commands.ShooterCommand;
-import frc.robot.commands.Auton.AutonDriveDistanceCommand;
 import frc.robot.commands.Auton.AutonRoutines;
 import frc.robot.commands.Auton.ClimberCommand;
 import frc.robot.commands.Auton.ZeroHeadingCommand;
@@ -57,6 +57,9 @@ public class RobotContainer {
   private final IndexerCommand _indexerCommand = new IndexerCommand(_indexer);
   private final ShooterCommand _shooterCommand = new ShooterCommand(_launcher);
 
+  // A chooser for autonomous commands
+  SendableChooser<Command> m_chooser = new SendableChooser<>();
+
   public static Joystick leftJoy;
   public static Joystick rightJoy;
   public XboxController xboxController;
@@ -66,11 +69,17 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    // Set up auton selector
+    m_chooser.setDefaultOption("Do Nothing", _autonRoutines.DoNothing());
+    m_chooser.addOption("Rotate and Fire", _autonRoutines.getRotateAndFire());
+
+    // Put the chooser on the dashboard
+    SmartDashboard.putData(m_chooser);
+
     // Configure the button bindings
     leftJoy = new Joystick(Constants.LEFT_JOYSTICK);
     rightJoy = new Joystick(Constants.RIGHT_JOYSTICK);
     xboxController = new XboxController(Constants.XBOX_CONTROLLER);
-    ///driveController = new XboxController(Constants.XBOX_CONTROLLER);
 
     // This method passes in the values of the controller to the command
     // CommandScheduler.getInstance()
@@ -91,6 +100,8 @@ public class RobotContainer {
       new FieldCentricSwerveDrive(_drive, leftJoy, rightJoy)
     );
 
+    // This method uses the xbox controller as the drive controller (xbox controller must be disabled for opp controls)  
+    /// driveController = new XboxController(Constants.XBOX_CONTROLLER);
     // CommandScheduler.getInstance()
     // .setDefaultCommand(
     //   driveSub,
@@ -124,10 +135,14 @@ public class RobotContainer {
           () -> xboxController.getY(Hand.kLeft)
         ));
 
+        // Set A button to raise launcher and tower
         new JoystickButton(xboxController, 1).whenPressed(new ClimberCommand(_climber, _launcher, true));
+        // Set Y button to lower launcher and tower
         new JoystickButton(xboxController, 4).whenPressed(new ClimberCommand(_climber, _launcher, false));
+        // Set X Button to reset launcher back to teleop position
         new JoystickButton(xboxController, 2).whenPressed(new PivotCommand(_launcher, Constants.AUTON_POSITION));
 
+        // While R1 is held launcher will spin up, when released it it slow to stop
 	    	new JoystickButton(xboxController, 6).whenPressed(() -> _shooterCommand.fire());
         new JoystickButton(xboxController, 6).whenReleased(() -> _shooterCommand.stop());
     }
@@ -138,8 +153,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return this._autonRoutines.getRotateFireMove();
+    // This runs the Auton picked from smart dashboard
+    return m_chooser.getSelected();
   }
 
 }

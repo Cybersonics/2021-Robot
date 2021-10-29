@@ -31,20 +31,20 @@ public class AutonRoutines {
         this._intake = intake;
     }
 
-    public Command getRotateFireMove() {
-        Command group; 
+	public Command DoNothing() {
+		return new DoNothingCommand();
+	}
 
-        group = new SequentialCommandGroup(        
+	public Command getRotateAndFire() {
+		return new SequentialCommandGroup(        
             // new ZeroHeadingCommand(this._drive),
             new PivotCommand(this._launcher, Constants.AUTON_POSITION),
-            new RotateCommand(_drive, 45.0),
+            new RotateCommand(this._drive, 45.0),
             new ParallelCommandGroup(
                 new IndexerCommand(this._indexer, () -> { return 1.0; }),
                 new ShooterCommand(this._launcher)
             ),
             new AutonDriveDistanceCommand(this._drive, 12.0)
         );
-
-        return group;
-    }
+	}
 }
