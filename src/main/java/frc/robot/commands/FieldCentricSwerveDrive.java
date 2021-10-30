@@ -10,22 +10,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import java.util.function.DoubleSupplier;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.NavXGyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.*;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+
 
 /**
  * Field Centric command that can operate as Robot centric when left 
  * joystick trigger is pulled.
  */
 public class FieldCentricSwerveDrive extends CommandBase {
-
-	NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-	NetworkTableEntry tx = table.getEntry("tx");
-	NetworkTableEntry ty = table.getEntry("ty");
-	NetworkTableEntry ta = table.getEntry("ta");
 
 	public static final double OMEGA_SCALE = 1.0 / 45.0;//30
 	public static final double DEADZONE_LSTICK = 0.06;
@@ -36,6 +30,7 @@ public class FieldCentricSwerveDrive extends CommandBase {
 	private double rightPow = 2;
 
 	private Drive drive;
+	private NavXGyro _navXGyro;
 	private final DoubleSupplier stickForward;
 	private final DoubleSupplier stickStrafe;
 	private final DoubleSupplier stickRotation;
@@ -60,11 +55,13 @@ public class FieldCentricSwerveDrive extends CommandBase {
 	
 	public FieldCentricSwerveDrive(Drive driveSub, 
 									Joystick leftJoystick, 
-									Joystick rightJoystick) {
+									Joystick rightJoystick,
+									NavXGyro navXGyro) {
 		this.stickForward = () -> leftJoystick.getY();
 		this.stickStrafe = () -> leftJoystick.getX();
 		this.stickRotation = () -> rightJoystick.getX();
 		this.stickFieldCentric = leftJoystick.getTrigger();
+		this._navXGyro = navXGyro;
 
 		
 		drive = driveSub;
@@ -81,23 +78,19 @@ public class FieldCentricSwerveDrive extends CommandBase {
 
 	@Override
 	public void initialize() {
-		originHeading = drive.getNavHeading();
+
+		originHeading = _navXGyro.getZeroAngle();
+
+		//originHeading = _navXGyro.getNavHeading();
 	}
 
     @Override
 	public void execute() {
 
-		double xVisionVal = tx.getDouble(0.0);
-		double yVisionVal = ty.getDouble(0.0);
-		double areaVisionVal = ta.getDouble(0.0);
-	
-		SmartDashboard.putNumber("LimelightX", xVisionVal);
-		SmartDashboard.putNumber("LimelightY", yVisionVal);
-		SmartDashboard.putNumber("LimLightArea", areaVisionVal);
 		SmartDashboard.putBoolean("LeftTrigger", stickFieldCentric);
-
 		final double originOffset = 360 - originHeading;
-		originCorr = drive.getNavHeading() + originOffset;
+		originCorr = _navXGyro.getNavAngle() + originOffset;
+		//originCorr = _navXGyro.getNavHeading() + originOffset;
 		
 		//double forward = stickForward.getAsDouble();
 		//double strafe = -stickStrafe.getAsDouble();
@@ -129,7 +122,8 @@ public class FieldCentricSwerveDrive extends CommandBase {
 			// current orientation and the current origin heading
 			// final double originCorrection = Math.toRadians(originHeading - Navx.getInstance().navX.getFusedHeading());
 			// final double temp = forward * Math.cos(originCorrection) - strafe * Math.sin(originCorrection);
-			final double originCorrection = Math.toRadians(originHeading - drive.getNavHeading());
+			final double originCorrection = Math.toRadians(originHeading - _navXGyro.getNavAngle());
+			//final double originCorrection = Math.toRadians(originHeading - _navXGyro.getNavHeading());
 			final double temp = forward * Math.cos(originCorrection) - strafe * Math.sin(originCorrection);
 			strafe = strafe * Math.cos(originCorrection) + forward * Math.sin(originCorrection);
 			forward = temp;

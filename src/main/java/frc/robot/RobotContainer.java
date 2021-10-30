@@ -29,6 +29,7 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Launcher;
+import frc.robot.subsystems.NavXGyro;
 
 
 /**
@@ -50,9 +51,12 @@ public class RobotContainer {
   public static Intake _intake = new Intake();
   public static Launcher _launcher = Launcher.getInstance();
   public static Climber _climber = Climber.getInstance();
+  public static NavXGyro _navXGyro = new NavXGyro();
+
   public double speedMultiplier = 0.45;
+
   
-  private final AutonRoutines _autonRoutines = new AutonRoutines(_drive, _launcher, _intake, _indexer);
+  private final AutonRoutines _autonRoutines = new AutonRoutines(_drive, _launcher, _intake, _indexer, _navXGyro);
   private final IntakeCommand _intakeCommand = new IntakeCommand(_intake);
   private final IndexerCommand _indexerCommand = new IndexerCommand(_indexer);
   private final ShooterCommand _shooterCommand = new ShooterCommand(_launcher);
@@ -69,6 +73,9 @@ public class RobotContainer {
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+
+
     // Set up auton selector
     m_chooser.setDefaultOption("Do Nothing", _autonRoutines.DoNothing());
     m_chooser.addOption("Rotate and Fire", _autonRoutines.getRotateAndFire());
@@ -97,7 +104,7 @@ public class RobotContainer {
     // This method passes the controllers themselves in so the command can get values
     CommandScheduler.getInstance()
     .setDefaultCommand(_drive, 
-      new FieldCentricSwerveDrive(_drive, leftJoy, rightJoy)
+      new FieldCentricSwerveDrive(_drive, leftJoy, rightJoy, _navXGyro)
     );
 
     // This method uses the xbox controller as the drive controller (xbox controller must be disabled for opp controls)  
@@ -123,7 +130,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(leftJoy, 7).whenPressed(new ZeroHeadingCommand(_drive));
+    new JoystickButton(leftJoy, 7).whenPressed(new ZeroHeadingCommand(_drive, _navXGyro));
 
         _indexer.setDefaultCommand(new IndexerCommand(
           _indexer,

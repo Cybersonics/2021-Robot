@@ -41,7 +41,9 @@ public class AutonDriveDistanceCommand extends CommandBase {
     public void execute() {
       // double currentRotation = this._drive.getDriveEncoderAvg();
       // _distance = currentRotation + this._distance;
-      this._drive.swerveDrive(0.0, 0.5, 0.0, false);
+      //The strafe value is used as pushing the value directly into the drive system 
+      //operates the bot in Robot Centric form.
+      this._drive.swerveDrive(0.4, 0.0, 0.0, false);
       // System.out.println("Curent: " + currentRotation);
     }
   

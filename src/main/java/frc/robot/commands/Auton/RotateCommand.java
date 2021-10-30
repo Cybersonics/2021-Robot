@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.NavXGyro;
 
 public class RotateCommand extends CommandBase {
 
@@ -14,15 +15,17 @@ public class RotateCommand extends CommandBase {
     private double _navStart;
     private double _navEnd;
     private Timer _timer;
+    private NavXGyro _navXGyro;
 
     /**
      * Creates a new Drive.
      */
-    public RotateCommand(Drive drive, double angle) {
+    public RotateCommand(Drive drive, double angle, NavXGyro navXGyro) {
       this._drive = drive;
-      this._navStart = this._drive.getNavAngle();
+      //this._navStart = this._drive.getNavAngle();
       this._degrees = angle;
-      this._navEnd = (this._navStart + this._degrees) % 360.0;
+      //this._navEnd = (this._navStart + this._degrees) % 360.0;
+      this._navXGyro = navXGyro;
 
       
       this._drive.setDriveEncodersPosition(0);
@@ -34,6 +37,10 @@ public class RotateCommand extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+      this._navXGyro.zeroNavHeading();
+      this._navStart = this._navXGyro.getZeroAngle();
+      //this._navStart = this._navXGyro.getNavAngle();
+      this._navEnd = (this._navStart + this._degrees) % 360.0;
       this._timer = new Timer();
       _timer.start();
     }
@@ -60,9 +67,10 @@ public class RotateCommand extends CommandBase {
     public boolean isFinished() {
       System.out.println("[RotateCommand#fin] Init Nav: " + this._navStart); 
       System.out.println("[RotateCommand#fin] End Nav(+-5): " + this._navEnd); 
-      System.out.println("[RotateCommand#fin] GoTo Heading: " + (this._navStart - this._drive.getNavAngle()));
-      if((this._navStart - this._drive.getNavAngle()) >= (this._navEnd - 5) ||
-       (this._navStart - this._drive.getNavAngle()) >=  (this._navEnd + 5)) {
+      System.out.println("[RotateCommand#fin] GoTo Heading: " + (this._navStart - this._navXGyro.getNavAngle()));
+      // if((this._navStart - this._navXGyro.getNavAngle()) >= (this._navEnd - 5) ||
+      //  (this._navStart - this._navXGyro.getNavAngle()) >=  (this._navEnd + 5)) {
+        if((this._navStart - this._navXGyro.getNavAngle()) >= (this._navEnd - 1)) {
         return true;
       }
       return false;

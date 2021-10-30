@@ -2,16 +2,19 @@ package frc.robot.commands.Auton;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.NavXGyro;
 
 public class ZeroHeadingCommand extends CommandBase {
 
     private Drive _drive;
+    private NavXGyro _navXGyro;
 
     /**
      * Creates a new Drive.
      */
-    public ZeroHeadingCommand(Drive drive) {
+    public ZeroHeadingCommand(Drive drive, NavXGyro navXGyro) {
       this._drive = drive;
+      this._navXGyro = navXGyro;
 	  addRequirements(this._drive);
     }
   
@@ -25,7 +28,7 @@ public class ZeroHeadingCommand extends CommandBase {
     public void execute() {
       
       System.out.println("[ZeroHeadingCommand#exe] Reset Nav!");
-            this._drive.zeroNavHeading();
+            this._navXGyro.zeroNavHeading();
     }
   
     // Called once the command ends or is interrupted.
@@ -36,8 +39,8 @@ public class ZeroHeadingCommand extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {      
-      System.out.println("[ZeroHeadingCommand#fin] Heading: " + this._drive.getNavAngle());
-        return this._drive.getNavAngle() == 0.0;
+      System.out.println("[ZeroHeadingCommand#fin] Heading: " + this._navXGyro.getNavAngle());
+        return this._navXGyro.getNavAngle() == 0.0;
     }
   }
   

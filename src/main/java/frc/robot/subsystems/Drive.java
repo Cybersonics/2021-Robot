@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import com.kauailabs.navx.frc.AHRS;
+//import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SPI;
@@ -30,7 +30,7 @@ public class Drive extends SubsystemBase {
 	private static swerveModule frontRight;
 	private static swerveModule backRight;
 
-	public static AHRS navX;
+	//public static AHRS navX;
 	public double heading;
 	public double angle;
 
@@ -81,7 +81,7 @@ public class Drive extends SubsystemBase {
 		backRight = new swerveModule(Constants.BR_STEER_ENCODER, Constants.BR_STEER_MOTOR, Constants.BR_DRIVE_MOTOR,
 				invertDrive, invertSteer);
 
-		navX = new AHRS(SPI.Port.kMXP);
+		//navX = new AHRS(SPI.Port.kMXP);
 
 	}
 
@@ -219,10 +219,14 @@ public class Drive extends SubsystemBase {
 	}
 	
 	public double getDriveEncoderAvg() {
-		double driveFL = frontLeft.getDriveEncoder();
-		double driveBL = backLeft.getDriveEncoder();
-		double driveFR = frontRight.getDriveEncoder();
-		double driveBR = backRight.getDriveEncoder();
+		// double driveFL = frontLeft.getDriveEncoder();
+		// double driveBL = backLeft.getDriveEncoder();
+		// double driveFR = frontRight.getDriveEncoder();
+		// double driveBR = backRight.getDriveEncoder();
+		double driveFL = Math.abs(frontLeft.getDriveEncoder());
+		double driveBL = Math.abs(backLeft.getDriveEncoder());
+		double driveFR = Math.abs(frontRight.getDriveEncoder());
+		double driveBR = Math.abs(backRight.getDriveEncoder());
 
 		return ((driveFL + driveBL) / 2) + ((driveFR + driveBR) / 2) / 2;
 	}
@@ -253,20 +257,20 @@ public class Drive extends SubsystemBase {
 		return frontRight.getSteerMotorEncoder();
 	}
 
-	public double getNavHeading() {
-		this.heading = navX.getFusedHeading();
-		return heading;
-	}
+	// public double getNavHeading() {
+	// 	this.heading = navX.getFusedHeading();
+	// 	return heading;
+	// }
 
-	public double getNavAngle() {
-		this.angle = navX.getAngle();
-		return angle;
-	}
+	// public double getNavAngle() {
+	// 	this.angle = navX.getAngle();
+	// 	return angle;
+	// }
 
-	public void zeroNavHeading() {
-		//navX.zeroYaw();
-		navX.reset();
-	}
+	// public void zeroNavHeading() {
+	// 	//navX.zeroYaw();
+	// 	navX.reset();
+	// }
 
 	public void initDefaultCommand() {
 		// setDefaultCommand(new FieldCentricSwerveDrive());

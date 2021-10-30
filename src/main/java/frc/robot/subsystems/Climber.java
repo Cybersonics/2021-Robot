@@ -52,10 +52,12 @@ public class Climber extends SubsystemBase {
     }
 
     public boolean extended() {
+        System.out.println("Rev limit" + ClimberTalon.isRevLimitSwitchClosed());
         return ClimberTalon.isRevLimitSwitchClosed() == 1;
     }
 
     public boolean retracted() {
+        System.out.println("Fwd limit" + ClimberTalon.isFwdLimitSwitchClosed());
         return ClimberTalon.isFwdLimitSwitchClosed() == 1;
     }
 
